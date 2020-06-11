@@ -12,7 +12,7 @@ Who:
 When: 
 	Last modified:  2020/05/11
 
-======
+========================================
 
 Replace 000 by OOO in send commands
 
@@ -20,20 +20,4 @@ Change PWM frequency to 31 kHz
 
 Send command with CR instead of CRLF
 
-======
-
-Typical usage on the command prompt:
-Send     : >SOOO\n      //request state
-Recieve  : *S19000\n    //returned state
-
-Send     : >B128\n      //set brightness 128
-Recieve  : *B19128\n    //confirming brightness set to 128
-
-Send     : >JOOO\n      //get brightness
-Recieve  : *B19128\n    //brightness value of 128 (assuming as set from above)
-
-Send     : >LOOO\n      //turn light on (uses set brightness value)
-Recieve  : *L19OOO\n    //confirms light turned on
-
-Send     : >DOOO\n      //turn light off (brightness value should not be changed)
-Recieve  : *D19OOO\n    //confirms light turned off.
+========================================
