@@ -1,4 +1,4 @@
-ArduinoLightbox
+ArduinoLightbox (Improve compliancy with Altinak Generic Commands)
 ===============
 
 
