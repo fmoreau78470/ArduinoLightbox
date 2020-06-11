@@ -12,11 +12,10 @@ Who:
 When: 
 	Last modified:  2020/05/11
 
-================================================================
-Bug correction (replace 000 (numbers) by OOO (letters)
+======
 Change PWM frequency to 31 kHz
 Send command with CR instead of CRLF
-================================================================
+======
 
 Typical usage on the command prompt:
 Send     : >SOOO\n      //request state
