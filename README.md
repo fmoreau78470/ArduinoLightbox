@@ -13,8 +13,13 @@ When:
 	Last modified:  2020/05/11
 
 ======
+
+Replace 000 by OOO in send commands
+
 Change PWM frequency to 31 kHz
+
 Send command with CR instead of CRLF
+
 ======
 
 Typical usage on the command prompt:
