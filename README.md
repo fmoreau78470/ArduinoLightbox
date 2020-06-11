@@ -12,7 +12,7 @@ Who:
 When: 
 	Last modified:  2020/05/11
 
-Bug correction (replace 000 (numbres) by OOO (letters)
+Bug correction (replace 000 (numbers) by OOO (letters)
 Change PWM frequency to 31 kHz
 
 Typical usage on the command prompt:
