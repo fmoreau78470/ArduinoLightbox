@@ -7,27 +7,27 @@ Who:
 	Created By: Jared Wellman - jared@mainsequencesoftware.com
 
 When: 
-	Last modified:  2013/May/05
+	Last modified:  2020/June/10 by Francis MOREAU (replace 000 by OOO to be compliant with Alnitak Generic Commands
 
 
 Typical usage on the command prompt:
-Send     : >S000\n      //request state
+Send     : >SOOO\n      //request state
 Recieve  : *S19000\n    //returned state
 
 Send     : >B128\n      //set brightness 128
 Recieve  : *B19128\n    //confirming brightness set to 128
 
-Send     : >J000\n      //get brightness
+Send     : >JOOO\n      //get brightness
 Recieve  : *B19128\n    //brightness value of 128 (assuming as set from above)
 
-Send     : >L000\n      //turn light on (uses set brightness value)
-Recieve  : *L19000\n    //confirms light turned on
+Send     : >LOOO\n      //turn light on (uses set brightness value)
+Recieve  : *L19OOO\n    //confirms light turned on
 
-Send     : >D000\n      //turn light off (brightness value should not be changed)
-Recieve  : *D19000\n    //confirms light turned off.
+Send     : >DOOO\n      //turn light off (brightness value should not be changed)
+Recieve  : *D19OOO\n    //confirms light turned off.
 */
 
-volatile int ledPin = 13;      // the pin that the LED is attached to, needs to be a PWM pin.
+volatile int ledPin = 11;      // the pin that the LED is attached to, needs to be a PWM pin.
 int brightness = 0;
 
 enum devices
@@ -65,6 +65,15 @@ int coverStatus = UNKNOWN;
 
 void setup()
 {
+  //----- PWM frequency for D3 & D11 -----
+  //Timer2 divisor = 2, 16, 64, 128, 512, 2048
+  TCCR2B = TCCR2B & B11111000 | B00000001;    // 31KHz
+  //TCCR2B = TCCR2B & B11111000 | B00000010;    // 3.9KHz
+  //TCCR2B = TCCR2B & B11111000 | B00000011;    // 980Hz
+  //TCCR2B = TCCR2B & B11111000 | B00000100;    // 490Hz (default)
+  //TCCR2B = TCCR2B & B11111000 | B00000101;    // 245Hz
+  //TCCR2B = TCCR2B & B11111000 | B00000110;    // 122.5Hz
+  //TCCR2B = TCCR2B & B11111000 | B00000111;    // 30.6Hz
   // initialize the serial communication:
   Serial.begin(9600);
   // initialize the ledPin as an output:
@@ -83,7 +92,7 @@ void handleSerial()
   if( Serial.available() >= 6 )  // all incoming communications are fixed length at 6 bytes including the \n
   {
     char* cmd;
-	char* data;
+	  char* data;
     char temp[10];
     
     int len = 0;
@@ -111,66 +120,66 @@ void handleSerial()
     {
 	  /*
 		Ping device
-			Request: >P000\n
-			Return : *Pii000\n
+			Request: >POOO\n
+			Return : *PiiOOO\n
 				id = deviceId
 	  */
       case 'P':
-		  sprintf(temp, "*P%d000", deviceId);
-		  Serial.println(temp);
+		  sprintf(temp, "*P%dOOO\n", deviceId);
+		  Serial.print(temp);
 		  break;
 
       /*
 		Open shutter
-			Request: >O000\n
-			Return : *Oii000\n
+			Request: >OOOO\n
+			Return : *OiiOOO\n
 				id = deviceId
 
 			This command is only supported on the Flip-Flat!
 	  */
       case 'O':
-		  sprintf(temp, "*O%d000", deviceId);
+		  sprintf(temp, "*O%dOOO\n", deviceId);
 		  SetShutter(OPEN);
-		  Serial.println(temp);
+		  Serial.print(temp);
 		  break;
 
 
       /*
 		Close shutter
-			Request: >C000\n
-			Return : *Cii000\n
+			Request: >COOO\n
+			Return : *CiiOOO\n
 				id = deviceId
 
 			This command is only supported on the Flip-Flat!
 	  */
       case 'C':
-		  sprintf(temp, "*C%d000", deviceId);
+		  sprintf(temp, "*C%dOOO\n", deviceId);
 		  SetShutter(CLOSED);
-		  Serial.println(temp);
+		  Serial.print(temp);
 		  break;
 
 	  /*
 		Turn light on
-			Request: >L000\n
-			Return : *Lii000\n
+			Request: >LOOO\n
+			Return : *LiiOOO\n
 				id = deviceId
 	  */
       case 'L':
-		  sprintf(temp, "*L%d000", deviceId);
-		  Serial.println(temp);
+		  sprintf(temp, "*L%dOOO\n", deviceId);
+		  Serial.print(temp);
 		  lightStatus = ON;
 		  analogWrite(ledPin, brightness);
 		  break;
 
 	  /*
 		Turn light off
-			Request: >D000\n
-			Return : *Dii000\n
+			Request: >DOOO\n
+			Return : *DiiOOO\n
 				id = deviceId
 	  */
       case 'D':
-		  sprintf(temp, "*D%d000", deviceId);
-		  Serial.println(temp);
+		  sprintf(temp, "*D%dOOO\n", deviceId);
+		  Serial.print(temp);
 		  lightStatus = OFF;
 		  analogWrite(ledPin, 0);
 		  break;
@@ -187,25 +196,25 @@ void handleSerial()
 		  brightness = atoi(data);    
 		  if( lightStatus == ON ) 
 			  analogWrite(ledPin, brightness);   
-		  sprintf( temp, "*B%d%03d", deviceId, brightness );
-		  Serial.println(temp);
+		  sprintf( temp, "*B%d%03d\n", deviceId, brightness );
+		  Serial.print(temp);
         break;
 
 	  /*
 		Get brightness
-			Request: >J000\n
+			Request: >JOOO\n
 			Return : *Jiiyyy\n
 				id = deviceId
-				yyy = current brightness value from 000-255
+				yyy = current brightness value from OOO-255
 	  */
       case 'J':
-        sprintf( temp, "*J%d%03d", deviceId, brightness);
-        Serial.println(temp);
+        sprintf( temp, "*J%d%03d\n", deviceId, brightness);
+        Serial.print(temp);
         break;
       
 	  /*
 		Get device status:
-			Request: >S000\n
+			Request: >SOOO\n
 			Return : *SidMLC\n
 				id = deviceId
 				M  = motor status( 0 stopped, 1 running)
@@ -213,19 +222,19 @@ void handleSerial()
 				C  = Cover Status( 0 moving, 1 closed, 2 open)
 	  */
       case 'S': 
-        sprintf( temp, "*S%d%d%d%d",deviceId, motorStatus, lightStatus, coverStatus);
-        Serial.println(temp);
+        sprintf( temp, "*S%d%d%d%d\n",deviceId, motorStatus, lightStatus, coverStatus);
+        Serial.print(temp);
         break;
 
 	  /*
 		Get firmware version
-			Request: >V000\n
+			Request: >VOOO\n
 			Return : *Vii001\n
 				id = deviceId
 	  */
       case 'V': // get firmware version
-		  sprintf(temp, "*V%d001", deviceId);
-		  Serial.println(temp);
+		  sprintf(temp, "*V%d001\n", deviceId);
+		  Serial.print(temp);
 		  break;
     }    
 
